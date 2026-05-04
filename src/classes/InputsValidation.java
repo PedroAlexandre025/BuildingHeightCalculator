@@ -28,7 +28,7 @@ public class InputsValidation {
 		// 2dy/g>t²
 		// t < sqrt(2dy/g)
 		//o tempo também não pode ser menor ou igual a windowHeight/MAX_SPEED
-		if (timeInWindow<= windowHeight/MAX_SPEED  || timeInWindow >= Math.sqrt((2 * windowHeight) / 9.8)) {
+		if (timeInWindow<= windowHeight/MAX_SPEED|| timeInWindow >= Math.sqrt((2 * windowHeight) / 9.8)) {
 			return 2;
 		}
 

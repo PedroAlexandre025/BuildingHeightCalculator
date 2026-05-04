@@ -91,11 +91,7 @@ public class Interface extends JFrame implements ActionListener {
 		//botão de simulação invisivel antes de realizar o calculo
 		simulateButton.setVisible(false);
 
-
 		add(simulateButton);
-
-
-
 
 		//deixar interface visivel
 		setVisible(true);
@@ -188,8 +184,9 @@ public class Interface extends JFrame implements ActionListener {
 
 
 
+
 	//classe de simulação
-	//tamanho setado do painel 400x400
+	//tamanho setado do painel 400x400px
 	public class Simulation extends JPanel{
 		private static final double SCALE = 1.2;//escala base em pixels para definir a altura do prédio dinamicamente de acordo com resultado.
 		private static final double windowScale = 3.0; // escala para a janela não ficar muito pequena
