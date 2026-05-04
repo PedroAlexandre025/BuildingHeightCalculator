@@ -299,7 +299,6 @@ public class Interface extends JFrame implements ActionListener {
 				g.fillRect(165, y, 10, 10);
 				g.fillRect(225, y, 10, 10);
 
-
 			}
 			//arvore
 			g.setColor(new Color(64, 19, 19));

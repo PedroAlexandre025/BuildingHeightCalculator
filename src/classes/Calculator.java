@@ -14,6 +14,7 @@ public class Calculator {
 		if (windowHeight <= 0 || timeInWindow <= 0 || fallAndBackTime <= 0) {
 			throw new IllegalArgumentException(" Valores não pode ser menores ou igual a zero");
 		}
+
 		this.windowHeight = windowHeight;
 		this.timeInWindow = timeInWindow;
 		this.fallAndBackTime = fallAndBackTime;
