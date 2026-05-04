@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 public class Interface extends JFrame implements ActionListener {
 
 
-	private int valid;
+	private int validation;
 	private double height, fallT, windowT, heightBuilding;
 	private JTextField heightField, windowTime, fallBack;
 	private JLabel result;
@@ -88,15 +88,13 @@ public class Interface extends JFrame implements ActionListener {
 		add(reset);
 		add(calc);
 
-
+		//botão de simulação invisivel antes de realizar o calculo
 		simulateButton.setVisible(false);
 
 
 		add(simulateButton);
 
 
-
-		//instanciar metodo simulacao
 
 
 		//deixar interface visivel
@@ -117,18 +115,18 @@ public class Interface extends JFrame implements ActionListener {
 				windowT = Double.parseDouble(t1);
 				fallT = Double.parseDouble(t2);
 
-				valid = new InputsValidation().validation(height, windowT, fallT); //metódo de classe para validação de dados
+				validation = new InputsValidation().validation(height, windowT, fallT); //metódo de classe para validação de dados
 
-				if(valid == 1) {
-					printErrorMessage("Erro 1","Altura inválida da janela! Deve ser maior que zero" ); //valor 1 retorna erro no primeiro input
+				if(validation == 1) {
+					printErrorMessage("Erro 1","Altura inválida da janela! Deve ser maior que zero e menor que 17,2" ); //valor 1 retorna erro no primeiro input
 
 				}
-				else if(valid == 2) {
+				else if(validation == 2) {
 					String err2_0 = String.format("%.2f", height/ InputsValidation.getMaxSpeed());
 					String err2_1 = String.format("%.2f", Math.sqrt((2 * height) / 9.8));
 					printErrorMessage("Erro 2","Tempo na janela Inválido! Deve ser maior que "+err2_0+ " e menor que "+err2_1 ); //valor 2 retorna erro no segundo input
 
-				}else if (valid ==3) {
+				}else if (validation ==3) {
 					String err3 = String.format("%.2f", 2*windowT);
 					printErrorMessage("Erro 3","Tempo de queda e volta inválido! Deve ser maior que "+err3 ); //valor 3 retorna erro no terceiro input
 
@@ -148,9 +146,9 @@ public class Interface extends JFrame implements ActionListener {
 
 		}
 		else if(e.getSource() == reset) {//função botão reset, limpar as caixas e zerar o resultado e remover simulação da tela
-			heightField.setText(null);
-			fallBack.setText(null);     	//valores nulos nos inputs
-			windowTime.setText(null);
+			heightField.setText("");
+			fallBack.setText("");     	//valores nulos nos inputs
+			windowTime.setText("");
 			result.setText("0,00m");//0 no output
 			simulateButton.setVisible(false);//simulação invisivel
 			sim.timer.stop();//parar o timer dela
@@ -160,17 +158,24 @@ public class Interface extends JFrame implements ActionListener {
 			revalidate();
 
 		}
-		else if(e.getSource() == simulateButton){ //botão para gerar quadro de simulação
-			sim = new Simulation();
-			sim.setBounds(0, 300, 400, 400);
-			sim.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "",
-					TitledBorder.LEFT, TitledBorder.TOP));
-			sim.setLayout(new GridBagLayout());
-			add(sim);
-			sim.setVisible(true);
-			repaint();
-			revalidate();
+		else if(e.getSource() == simulateButton ){ //botão para gerar quadro de simulação
 
+				if(sim != null){
+					sim.timer.stop(); //verificação para permitir reiniciar simulação
+					remove(sim);
+				}
+				sim = new Simulation();
+				sim.setBounds(0, 300, 400, 400);
+				sim.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "",
+						TitledBorder.LEFT, TitledBorder.TOP));
+				sim.setLayout(new GridBagLayout());
+				add(sim);
+				sim.setVisible(true);
+
+				repaint();
+				revalidate();
+
+			//}
 
 		}
 
@@ -183,8 +188,6 @@ public class Interface extends JFrame implements ActionListener {
 
 
 
-
-
 	//classe de simulação
 	//tamanho setado do painel 400x400
 	public class Simulation extends JPanel{
@@ -193,10 +196,11 @@ public class Interface extends JFrame implements ActionListener {
 		private int pixelsBuildingHeight, pixelsWindowTop, buildingPosition;
 		private Timer timer;	//timer para simulação
 		private double ballY, windowBasePixels;
-		private int goingUp = 0;	//ints para gerenciamento de maquina de estados
+		private int goingUp = 0;	//ints para gerenciamento de maquina de estados //0 cai, 1 recocheteia e sobe até o peitoril, 2 sobe até metade do peitoril
 		private int valid =0;
 
 		public Simulation(){
+			setBackground(new Color(45, 205, 218));
 			pixelsBuildingHeight = (int)(heightBuilding * SCALE);//calculo da altura em pixels
 
 			double positionTopWindow = 0.5*9.8*(calculator.getTimeRoofToWindowPeak()*calculator.getTimeRoofToWindowPeak()); //calculo da posição do topo da janela usando y - y0 = v0*t + (1/2)*at²
@@ -214,15 +218,12 @@ public class Interface extends JFrame implements ActionListener {
 
 			buildingPosition = 380-pixelsBuildingHeight;//calculo da posição onde o prédio começa a ser desenhado
 			ballY = buildingPosition;//definir altura onde a bola começa a cair
-			pixelsWindowTop = (int)(positionTopWindow*windowScale)+buildingPosition; //ṕosição do topo da janela em pixels
+			pixelsWindowTop = (int)(positionTopWindow*SCALE)+buildingPosition; //ṕosição do topo da janela em pixels
 			 windowBasePixels= pixelsWindowTop+(calculator.getWindowHeight()*windowScale); //posição da base da janela em pixels
 
 
-			setOpaque(false);
 
 			double frameSpeed =  pixelsBuildingHeight/(calculator.getTotalTime()*60); //calculo da velocidade por frame  altura em pixels/tempo total*frames por segundo
-
-
 
 
 			timer = new Timer(16, e ->{//maquina de estados para simulação
@@ -236,6 +237,7 @@ public class Interface extends JFrame implements ActionListener {
 						}
 						else if(valid==3){
 							timer.stop();//se valid =3 acaba a simulação
+
 						}else {
 							goingUp = 1;
 							valid++;	//senao, vai para o segundo e estado e incrementa valid (1)
@@ -257,30 +259,58 @@ public class Interface extends JFrame implements ActionListener {
 						goingUp = 0;//volta ao primeiro estado
 						valid++; //valid (3)
 					}
-					repaint();
+					repaint();//redesenhar a cada frame
 				}
 			});
-			timer.start();
+			timer.start();//começar o timer
 
 		}
 
 		@Override
 		public void paintComponent(Graphics g) {
+
 			super.paintComponent(g);
+			//
+
 			//predio
-			g.setColor(Color.blue);
+			g.setColor(Color.GRAY);
 			g.fillRect(160, buildingPosition, 80, pixelsBuildingHeight);
-			//janela
-			g.setColor(Color.gray);
-			g.fillRect(185, pixelsWindowTop, 30, ((int)windowBasePixels-pixelsWindowTop) );
+			//BORDA
+			g.setColor(Color.BLACK);
+			g.drawRect(160, buildingPosition, 80, pixelsBuildingHeight);
+			//janela principal
+
+			g.setColor(Color.YELLOW);
+			g.fillRect(190, pixelsWindowTop, 20, ((int)windowBasePixels-pixelsWindowTop) );
 
 			//chão
 			g.setColor(Color.GREEN);
 			g.fillRect(1 ,380, 400, 20);
+			//porta
+			g.setColor(new Color(81, 80, 80, 255));
+			g.fillRect(190, 350, 20,30);
+
 			//bola
 			g.setColor(Color.red);
 			g.fillOval(197, (int)ballY, 7,	7);
 
+			//janelinhas
+			g.setColor(Color.YELLOW);
+
+			for(int y = buildingPosition + 10; y < 340; y += 25){
+
+				g.fillRect(165, y, 10, 10);
+				g.fillRect(225, y, 10, 10);
+
+
+			}
+			//arvore
+			g.setColor(new Color(64, 19, 19));
+			g.fillRect(90, 350, 10, 30);
+			g.fillRect(300, 350, 10, 30);
+			g.setColor(new Color(27, 67, 19));
+			g.fillOval(80, 330, 30,25);
+			g.fillOval(290, 330, 30,25);
 
 
 		}
