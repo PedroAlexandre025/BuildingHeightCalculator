@@ -34,25 +34,21 @@ O projeto utiliza equações da cinemática para calcular:
 
 ## Velocidade da bola ao atravessar a janela
 
-[
-v = \frac{\Delta y - \frac{1}{2}gt^2}{t}
-]
+<img width="274" height="135" alt="image" src="https://github.com/user-attachments/assets/49ea48b7-2c74-4617-ba76-fd0b0033eeab" />
+
 
 ---
 
 ## Distância percorrida em queda livre
 
-[
-\Delta y = \frac{1}{2}gt^2
-]
+<img width="167" height="109" alt="image" src="https://github.com/user-attachments/assets/bbb25741-16f4-4fbf-9018-884ced81a4d1" />
+
 
 ---
 
 ## Velocidade final em queda livre
 
-[
-v = gt
-]
+<img width="140" height="59" alt="image" src="https://github.com/user-attachments/assets/183f0059-34bf-451f-9381-4df0c93d273d" />
 
 ---
 
