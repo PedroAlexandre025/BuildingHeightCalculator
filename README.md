@@ -13,6 +13,11 @@ A aplicação recebe dados fornecidos pelo usuário, realiza validações físic
 Além do cálculo, o sistema também possui uma simulação gráfica animada utilizando `JPanel`, `Graphics` e `Timer`.
 
 ---
+# Problema base para o projeto
+
+<img width="1357" height="612" alt="image" src="https://github.com/user-attachments/assets/27effe2a-bf68-43ba-9f1e-992f92a97445" />
+
+---
 
 # 🎯 Objetivos do projeto
 
@@ -87,7 +92,7 @@ O sistema impede:
 * velocidades fisicamente absurdas;
 * combinações impossíveis de valores.
 
-Foi definido um limite máximo de velocidade baseado em estimativas reais de velocidade terminal de uma bola de boliche.
+Foi definido um limite máximo de velocidade baseado em estimativas reais de velocidade terminal de uma bola de aço de 5kg.
 
 ---
 
@@ -106,6 +111,9 @@ A animação foi implementada utilizando:
 * `paintComponent()`;
 * `Graphics`;
 * `javax.swing.Timer`.
+
+Como diz o problema, a bola não perde energia quando bate chega ao chão após a primeira queda, logo, ela foi animada retornando ao ponto de origem.
+Quando cai novamente, ao bater no chão, fiz com que ela suba somente metade da distancia inicial, simulando uma perda de energia.
 
 ---
 
