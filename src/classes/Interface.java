@@ -162,7 +162,7 @@ public class Interface extends JFrame implements ActionListener {
 				}
 				sim = new Simulation();
 				sim.setBounds(0, 300, 400, 400);
-				sim.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "",
+				sim.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), "",	//instanciar simulação, criar layout e adicionar a JFrane
 						TitledBorder.LEFT, TitledBorder.TOP));
 				sim.setLayout(new GridBagLayout());
 				add(sim);
@@ -193,7 +193,7 @@ public class Interface extends JFrame implements ActionListener {
 		private int pixelsBuildingHeight, pixelsWindowTop, buildingPosition;
 		private Timer timer;	//timer para simulação
 		private double ballY, windowBasePixels;
-		private int goingUp = 0;	//ints para gerenciamento de maquina de estados //0 cai, 1 recocheteia e sobe até o peitoril, 2 sobe até metade do peitoril
+		private int goingUp = 0;	//int para gerenciamento de maquina de estados //0 cai, 1 recocheteia e sobe até o topo da janela, 2 sobe até metade do bacminho de 1
 		private int valid =0;
 
 		public Simulation(){
@@ -216,47 +216,53 @@ public class Interface extends JFrame implements ActionListener {
 			buildingPosition = 380-pixelsBuildingHeight;//calculo da posição onde o prédio começa a ser desenhado
 			ballY = buildingPosition;//definir altura onde a bola começa a cair
 			pixelsWindowTop = (int)(positionTopWindow*SCALE)+buildingPosition; //ṕosição do topo da janela em pixels
-			 windowBasePixels= pixelsWindowTop+(calculator.getWindowHeight()*windowScale); //posição da base da janela em pixels
-
-
+			windowBasePixels= pixelsWindowTop+(calculator.getWindowHeight()*windowScale); //posição da base da janela em pixels
 
 			double frameSpeed =  pixelsBuildingHeight/(calculator.getTotalTime()*60); //calculo da velocidade por frame  altura em pixels/tempo total*frames por segundo
 
 
 			timer = new Timer(16, e ->{//maquina de estados para simulação
 
-				if (goingUp ==0){
-					ballY += frameSpeed; //bolinha começa a cair
-					if (ballY >= 375){ //condicional para se chegar no chão
+				switch (goingUp){
+					case 0:
+						ballY += frameSpeed; //bolinha começa a cair
+						if (ballY >= 375){ // se chegar no chão
 
-						if (valid ==2){
-							goingUp = 2;//se valid = 2 vai para o 3 estado
+							switch (valid){
+								case 0:
+									goingUp = 1;
+									valid++;	// vai para o segundo e estado e incrementa valid (1)
+								break;
+								case 2:
+									goingUp = 2;//se valid = 2 vai para o 3 estado
+								break;
+								case 3:
+									timer.stop();//se valid =3 acaba a simulação
+								break;
+							}
+
 						}
-						else if(valid==3){
-							timer.stop();//se valid =3 acaba a simulação
+						repaint();
+					break;
 
-						}else {
-							goingUp = 1;
-							valid++;	//senao, vai para o segundo e estado e incrementa valid (1)
+					case 1:
+						ballY-= frameSpeed;//bola começa a subir
+
+						if (ballY<=buildingPosition){//quando chegar ao topo da janela na subida incrementa valid (2)e volta para o primeiro estado
+							valid++;
+							goingUp = 0;
 						}
-					}
-					repaint();
-				}
-				else if(goingUp == 1){
-					ballY-= frameSpeed;//bola começa a subir
+						repaint();
+					break;
 
-					if (ballY<=windowBasePixels){//quando chegar ao peitoril da janela incrementa valid (2)e volta para o primeiro estado
-						valid++;
-						goingUp = 0;
-					}
-					repaint();
-				}else {//bola subindo novamente, mas apenas metade do caminho
-					ballY-=frameSpeed;
-					if (ballY<=windowBasePixels+(380-windowBasePixels)/2){//condicional para ir até metade do caminho do peitoril da janela
-						goingUp = 0;//volta ao primeiro estado
-						valid++; //valid (3)
-					}
-					repaint();//redesenhar a cada frame
+					case 2:
+						ballY-=frameSpeed; //bola subindo novamente, mas apenas metade do caminho
+						if (ballY<=buildingPosition+(380-buildingPosition)/2){//condicional para ir até metade do caminho da primeira subida
+							goingUp = 0;//volta ao primeiro estado
+							valid++; //valid (3)
+						}
+						repaint();//redesenhar a cada frame
+					break;
 				}
 			});
 			timer.start();//começar o timer
@@ -267,7 +273,7 @@ public class Interface extends JFrame implements ActionListener {
 		public void paintComponent(Graphics g) {
 
 			super.paintComponent(g);
-			//
+
 
 			//predio
 			g.setColor(Color.GRAY);
